@@ -2,6 +2,7 @@ package com.example.demo.securityConfig;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -15,6 +16,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurirtyConfig {
 
     @Bean
@@ -28,12 +30,12 @@ public class SecurirtyConfig {
 
     @Bean
     UserDetailsService userDetailsService()
-    {UserDetails user1= User.withUsername("user1")
+    {UserDetails user1= User.withUsername("user")
                 .password("{noop}password")
-                .roles("user")
+                .roles("User")
                 .build();
         UserDetails admin= User.withUsername("Admin")
-                .password("{noop}password1")
+                .password("{noop}password")
                 .roles("Admin")
                 .build();
         return new InMemoryUserDetailsManager(user1,admin);

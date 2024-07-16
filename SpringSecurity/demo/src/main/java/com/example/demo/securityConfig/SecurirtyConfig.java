@@ -9,8 +9,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -18,7 +21,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurirtyConfig {
-
+   
+    @Autowired
+    DataSource dataSource;
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
@@ -38,7 +43,11 @@ public class SecurirtyConfig {
                 .password("{noop}password")
                 .roles("Admin")
                 .build();
-        return new InMemoryUserDetailsManager(user1,admin);
+        JdbcUserDetailsManager jdbcUserDetailsManager=new JdbcUserDetailsManager(dataSource);
+        jdbcUserDetailsManager.createUser(user1);
+        jdbcUserDetailsManager.createUser(admin);
+        return jdbcUserDetailsManager;
+        //return new InMemoryUserDetailsManager(user1,admin); //removing this part means now I am store username and password in database
     }
 
 
